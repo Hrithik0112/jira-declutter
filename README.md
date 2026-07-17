@@ -8,7 +8,7 @@ A lightweight Chrome extension that lets you hide the parts of Jira's issue deta
 2. Open Chrome → `chrome://extensions`
 3. Enable **Developer mode** (top-right toggle)
 4. Click **Load unpacked** → select the unzipped folder
-5. Open your Jira tab (e.g. `login.jira.unifize.com`) and **refresh the page** (required after Load unpacked)
+5. Open your Jira tab (e.g. `your-company.atlassian.net` or your company Jira URL) and **refresh the page** (required after Load unpacked)
 6. Click the extension icon — use **Layout** toggles anywhere; open an issue for the detail toggles
 
 ## What you can hide
@@ -19,6 +19,11 @@ A lightweight Chrome extension that lets you hide the parts of Jira's issue deta
 | **Main**       | Description, Attachments, Child issues, Linked issues, Activity/Comments |
 | **Side Panel** | Details, Development, More fields, Automation, People, Dates, Time tracking, Sprint, Created/Updated |
 | **Size & Font**| Main/side width, spacing, font size, font family |
+| **Linear**     | Linear-style issue overlay (scrapes the open issue from the page DOM) |
+
+## Linear view
+
+Open an issue → extension popup → **Linear** tab → enable **Linear-style overlay**. Optionally enable **Dark mode** (also toggleable via the moon/sun button in the overlay). The content script reads title, description, status, assignee, labels, sub-issues, comments, and related fields from Jira’s DOM and renders a cleaner two-column UI. It’s read-only for now; close with ✕ or turn the toggle off.
 
 ## How it works
 

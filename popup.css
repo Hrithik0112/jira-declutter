@@ -308,7 +308,7 @@ input:focus-visible + .switch {
 
 .tabs {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 4px;
   padding: 3px;
   margin-bottom: 10px;

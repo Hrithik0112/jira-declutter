@@ -1,0 +1,758 @@
+/*
+ * Jira Declutter — Linear View overlay
+ * Polished light + dark themes. Only shows fields present on the issue.
+ */
+
+html.jd-linear-view {
+  overflow: hidden !important;
+}
+
+html.jd-linear-view body > *:not(#jd-linear-root) {
+  pointer-events: none !important;
+}
+
+#jd-linear-root {
+  /* Light theme tokens */
+  --jdl-bg: #f4f5f7;
+  --jdl-shell: #ffffff;
+  --jdl-shell-2: #fbfbfc;
+  --jdl-side: #f7f7f8;
+  --jdl-ink: #141416;
+  --jdl-ink-2: #3a3d45;
+  --jdl-muted: #8b8d97;
+  --jdl-line: rgba(20, 20, 24, 0.08);
+  --jdl-line-strong: rgba(20, 20, 24, 0.12);
+  --jdl-hover: rgba(20, 20, 24, 0.04);
+  --jdl-chip: #eef0ff;
+  --jdl-chip-ink: #5e6ad2;
+  --jdl-accent: #5e6ad2;
+  --jdl-code: #f2f2f4;
+  --jdl-veil: rgba(12, 14, 20, 0.38);
+  --jdl-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.4) inset,
+    0 24px 64px rgba(10, 12, 20, 0.22),
+    0 2px 8px rgba(10, 12, 20, 0.08);
+  --jdl-status-bg: #f1f1f3;
+  --jdl-progress-track: #e6e7eb;
+  --jdl-severity: #d14343;
+  --jdl-glow: rgba(94, 106, 210, 0.18);
+
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 2147483000 !important;
+  display: flex !important;
+  align-items: stretch !important;
+  justify-content: center !important;
+  padding: 18px !important;
+  background:
+    radial-gradient(120% 80% at 10% -10%, var(--jdl-glow), transparent 55%),
+    radial-gradient(90% 70% at 100% 0%, rgba(255, 255, 255, 0.08), transparent 50%),
+    var(--jdl-veil) !important;
+  backdrop-filter: blur(10px) saturate(1.1) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(1.1) !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif !important;
+  color: var(--jdl-ink) !important;
+  line-height: 1.45 !important;
+  box-sizing: border-box !important;
+  transition: background 220ms ease, color 220ms ease;
+}
+
+#jd-linear-root.jdl-dark {
+  --jdl-bg: #0c0c0d;
+  --jdl-shell: #131316;
+  --jdl-shell-2: #16161a;
+  --jdl-side: #101014;
+  --jdl-ink: #ececef;
+  --jdl-ink-2: #c4c5cb;
+  --jdl-muted: #8a8d98;
+  --jdl-line: rgba(255, 255, 255, 0.07);
+  --jdl-line-strong: rgba(255, 255, 255, 0.11);
+  --jdl-hover: rgba(255, 255, 255, 0.045);
+  --jdl-chip: rgba(94, 106, 210, 0.2);
+  --jdl-chip-ink: #a8b0ff;
+  --jdl-accent: #7c87f0;
+  --jdl-code: rgba(255, 255, 255, 0.06);
+  --jdl-veil: rgba(4, 4, 6, 0.62);
+  --jdl-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 28px 70px rgba(0, 0, 0, 0.55),
+    0 2px 10px rgba(0, 0, 0, 0.35);
+  --jdl-status-bg: rgba(255, 255, 255, 0.06);
+  --jdl-progress-track: rgba(255, 255, 255, 0.08);
+  --jdl-severity: #ff7b72;
+  --jdl-glow: rgba(94, 106, 210, 0.22);
+  color-scheme: dark;
+}
+
+#jd-linear-root[hidden] {
+  display: none !important;
+}
+
+#jd-linear-root *,
+#jd-linear-root *::before,
+#jd-linear-root *::after {
+  box-sizing: border-box !important;
+}
+
+.jdl-shell {
+  position: relative;
+  width: min(70vw, 100%);
+  height: 100%;
+  max-height: calc(100vh - 36px);
+  display: flex;
+  flex-direction: column;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 48px),
+    var(--jdl-shell);
+  border-radius: 14px;
+  border: 1px solid var(--jdl-line-strong);
+  box-shadow: var(--jdl-shadow);
+  overflow: hidden;
+  animation: jdl-rise 280ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: background 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+}
+
+#jd-linear-root.jdl-dark .jdl-shell {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 56px),
+    var(--jdl-shell);
+}
+
+@keyframes jdl-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.jdl-shell--empty {
+  align-items: center;
+  justify-content: center;
+  background: var(--jdl-shell);
+}
+
+.jdl-empty {
+  text-align: center;
+  padding: 40px;
+}
+
+.jdl-empty-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 6px;
+  letter-spacing: -0.01em;
+}
+
+.jdl-empty-copy {
+  margin: 0;
+  font-size: 13px;
+  color: var(--jdl-muted);
+}
+
+/* Top bar */
+
+.jdl-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  flex-shrink: 0;
+}
+
+.jdl-crumb {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  font-size: 13px;
+  color: var(--jdl-muted);
+}
+
+.jdl-type-icon {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 1px var(--jdl-line);
+}
+
+.jdl-back,
+.jdl-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--jdl-muted);
+  cursor: pointer;
+  padding: 0;
+  transition: background 140ms ease, color 140ms ease, transform 140ms ease;
+}
+
+.jdl-back:hover,
+.jdl-icon-btn:hover {
+  background: var(--jdl-hover);
+  color: var(--jdl-ink);
+}
+
+.jdl-back:active,
+.jdl-icon-btn:active {
+  transform: scale(0.94);
+}
+
+.jdl-crumb-project {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+}
+
+.jdl-crumb-sep {
+  opacity: 0.45;
+}
+
+.jdl-crumb-key {
+  color: var(--jdl-ink-2);
+  font-weight: 560;
+  font-variant-numeric: tabular-nums;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: var(--jdl-hover);
+}
+
+.jdl-top-actions {
+  display: flex;
+  gap: 2px;
+}
+
+.jdl-shell--empty .jdl-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+/* Layout */
+
+.jdl-layout {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 75fr) minmax(220px, 25fr);
+  border-top: 1px solid var(--jdl-line);
+}
+
+.jdl-main {
+  overflow: auto;
+  padding: 8px 30px 44px;
+  background: linear-gradient(180deg, transparent, var(--jdl-shell-2) 120%);
+  scroll-behavior: smooth;
+}
+
+.jdl-main::-webkit-scrollbar,
+.jdl-side::-webkit-scrollbar {
+  width: 9px;
+}
+
+.jdl-main::-webkit-scrollbar-thumb,
+.jdl-side::-webkit-scrollbar-thumb {
+  background: var(--jdl-line-strong);
+  border-radius: 9px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.jdl-title {
+  margin: 6px 0 16px;
+  font-size: 26px;
+  font-weight: 650;
+  letter-spacing: -0.028em;
+  line-height: 1.22;
+  color: var(--jdl-ink);
+  animation: jdl-fade 320ms ease both;
+}
+
+@keyframes jdl-fade {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.jdl-prose {
+  font-size: 14.5px;
+  color: var(--jdl-ink-2);
+  line-height: 1.62;
+}
+
+.jdl-prose p {
+  margin: 0 0 11px;
+}
+
+.jdl-prose ul,
+.jdl-prose ol {
+  margin: 0 0 12px;
+  padding-left: 1.15em;
+}
+
+.jdl-prose li {
+  margin: 0 0 3px;
+}
+
+.jdl-prose h1,
+.jdl-prose h2,
+.jdl-prose h3 {
+  margin: 18px 0 7px;
+  color: var(--jdl-ink);
+  font-weight: 650;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+}
+
+.jdl-prose code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--jdl-code);
+  border-radius: 5px;
+  padding: 1px 5px;
+  color: var(--jdl-ink);
+}
+
+.jdl-prose pre {
+  background: var(--jdl-code);
+  border: 1px solid var(--jdl-line);
+  border-radius: 10px;
+  padding: 12px 14px;
+  overflow: auto;
+  font-size: 12.5px;
+}
+
+.jdl-prose img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  margin: 10px 0;
+  border: 1px solid var(--jdl-line);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+#jd-linear-root.jdl-dark .jdl-prose img {
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+}
+
+.jdl-prose a {
+  color: var(--jdl-accent);
+  text-decoration: none;
+}
+
+.jdl-prose a:hover {
+  text-decoration: underline;
+}
+
+.jdl-prose--sm {
+  font-size: 13.25px;
+}
+
+.jdl-muted {
+  color: var(--jdl-muted) !important;
+}
+
+.jdl-meta-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 14px 0 0;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--jdl-muted);
+  background: var(--jdl-hover);
+  border: 1px solid var(--jdl-line);
+}
+
+/* Sections */
+
+.jdl-section {
+  margin-top: 30px;
+  animation: jdl-fade 360ms ease both;
+}
+
+.jdl-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.jdl-section-head h2 {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--jdl-muted);
+}
+
+.jdl-count {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--jdl-hover);
+  border: 1px solid var(--jdl-line);
+  color: var(--jdl-ink-2);
+  font-size: 11px;
+  font-weight: 650;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.jdl-kv {
+  margin: 0;
+  border-top: 1px solid var(--jdl-line);
+}
+
+.jdl-kv-row {
+  display: grid;
+  grid-template-columns: 168px minmax(0, 1fr);
+  gap: 12px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--jdl-line);
+  font-size: 13px;
+}
+
+.jdl-kv-row dt {
+  margin: 0;
+  color: var(--jdl-muted);
+  font-weight: 500;
+}
+
+.jdl-kv-row dd {
+  margin: 0;
+  color: var(--jdl-ink);
+}
+
+.jdl-subissues {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--jdl-line);
+}
+
+.jdl-subissues li {
+  border-bottom: 1px solid var(--jdl-line);
+}
+
+.jdl-subissue {
+  display: grid;
+  grid-template-columns: 8px auto minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  padding: 10px 4px;
+  text-decoration: none;
+  color: inherit;
+  border-radius: 8px;
+  transition: background 140ms ease;
+}
+
+.jdl-subissue:hover {
+  background: var(--jdl-hover);
+}
+
+.jdl-subissue-key {
+  font-size: 12px;
+  color: var(--jdl-muted);
+  font-weight: 550;
+}
+
+.jdl-subissue-title {
+  font-size: 13.25px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Activity */
+
+.jdl-comments {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.jdl-comment {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 11px;
+  padding: 10px;
+  margin: 0 -10px;
+  border-radius: 12px;
+  transition: background 140ms ease;
+}
+
+.jdl-comment:hover {
+  background: var(--jdl-hover);
+}
+
+.jdl-comment-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.jdl-comment-author {
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--jdl-ink);
+}
+
+.jdl-comment-time {
+  font-size: 12px;
+  color: var(--jdl-muted);
+}
+
+/* Sidebar */
+
+.jdl-side {
+  overflow: auto;
+  padding: 18px 16px 32px;
+  border-left: 1px solid var(--jdl-line);
+  background:
+    linear-gradient(180deg, rgba(94, 106, 210, 0.04), transparent 80px),
+    var(--jdl-side);
+}
+
+#jd-linear-root.jdl-dark .jdl-side {
+  background:
+    linear-gradient(180deg, rgba(94, 106, 210, 0.07), transparent 90px),
+    var(--jdl-side);
+}
+
+.jdl-field {
+  margin-bottom: 17px;
+}
+
+.jdl-field-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 11px;
+  font-weight: 550;
+  letter-spacing: 0.01em;
+  color: var(--jdl-muted);
+}
+
+.jdl-field-value {
+  font-size: 13.25px;
+  color: var(--jdl-ink);
+  font-weight: 550;
+}
+
+.jdl-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 10px 4px 8px;
+  border-radius: 999px;
+  background: var(--jdl-status-bg);
+  border: 1px solid var(--jdl-line);
+  font-size: 12.5px;
+  font-weight: 550;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset;
+}
+
+.jdl-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #9ca3af;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 3px rgba(156, 163, 175, 0.18);
+}
+
+.jdl-status-dot--todo,
+.jdl-status-pill--todo .jdl-status-dot {
+  background: #9ca3af;
+  box-shadow: 0 0 0 3px rgba(156, 163, 175, 0.18);
+}
+
+.jdl-status-dot--progress,
+.jdl-status-pill--progress .jdl-status-dot {
+  background: #f2a60c;
+  box-shadow: 0 0 0 3px rgba(242, 166, 12, 0.2);
+}
+
+.jdl-status-dot--done,
+.jdl-status-pill--done .jdl-status-dot {
+  background: #4cb782;
+  box-shadow: 0 0 0 3px rgba(76, 183, 130, 0.2);
+}
+
+.jdl-status-dot--blocked,
+.jdl-status-pill--blocked .jdl-status-dot,
+.jdl-status-pill--default .jdl-status-dot {
+  background: #eb5757;
+  box-shadow: 0 0 0 3px rgba(235, 87, 87, 0.2);
+}
+
+.jdl-status-pill--progress {
+  background: rgba(242, 166, 12, 0.12);
+  border-color: rgba(242, 166, 12, 0.22);
+}
+
+.jdl-status-pill--done {
+  background: rgba(76, 183, 130, 0.12);
+  border-color: rgba(76, 183, 130, 0.22);
+}
+
+.jdl-severity {
+  color: var(--jdl-severity);
+  font-weight: 650;
+}
+
+.jdl-assignee,
+.jdl-inline-icon {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.jdl-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 1px var(--jdl-line);
+}
+
+.jdl-avatar--initials {
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.jdl-avatar--empty {
+  background: var(--jdl-hover);
+  color: var(--jdl-muted);
+  font-size: 10px;
+}
+
+.jdl-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.jdl-chip {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 550;
+  background: var(--jdl-chip);
+  color: var(--jdl-chip-ink);
+  border: 1px solid transparent;
+}
+
+#jd-linear-root.jdl-dark .jdl-chip {
+  border-color: rgba(94, 106, 210, 0.25);
+}
+
+.jdl-progress {
+  margin-top: 8px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--jdl-progress-track);
+  overflow: hidden;
+}
+
+.jdl-progress > span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #5e6ad2, #8b95f0);
+  border-radius: inherit;
+}
+
+.jdl-branches {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.jdl-branches a {
+  color: var(--jdl-accent);
+  text-decoration: none;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  word-break: break-all;
+}
+
+.jdl-branches a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 820px) {
+  #jd-linear-root {
+    padding: 0 !important;
+  }
+
+  .jdl-shell {
+    width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .jdl-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .jdl-side {
+    border-left: 0;
+    border-top: 1px solid var(--jdl-line);
+  }
+
+  .jdl-main {
+    padding: 6px 16px 28px;
+  }
+
+  .jdl-title {
+    font-size: 21px;
+  }
+
+  .jdl-kv-row {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jdl-shell,
+  .jdl-title,
+  .jdl-section {
+    animation: none !important;
+  }
+
+  .jdl-back,
+  .jdl-icon-btn,
+  .jdl-subissue,
+  .jdl-comment {
+    transition: none !important;
+  }
+}
