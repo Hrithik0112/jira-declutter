@@ -17,7 +17,8 @@ A lightweight Chrome extension that lets you hide the parts of Jira's issue deta
 |----------------|--------------------------------------------------|
 | **Layout**     | Left sidebar, Top navigation bar, Issue full screen (modal) |
 | **Main**       | Description, Attachments, Child issues, Linked issues, Activity/Comments |
-| **Side Panel** | Details, People, Dates, Development, Time tracking, Sprint |
+| **Side Panel** | Details, Development, More fields, Automation, People, Dates, Time tracking, Sprint, Created/Updated |
+| **Size & Font**| Main/side width, spacing, font size, font family |
 
 ## How it works
 

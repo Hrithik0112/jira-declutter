@@ -304,6 +304,152 @@ input:focus-visible + .switch {
   color: var(--muted);
 }
 
+/* ── Tabs ───────────────────────────────────────────── */
+
+.tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 3px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  background: rgba(18, 24, 38, 0.06);
+  border: 1px solid var(--panel-edge);
+}
+
+.tab {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 8px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.tab:hover {
+  color: var(--ink-soft);
+}
+
+.tab.is-active {
+  color: var(--accent);
+  background: var(--panel);
+  box-shadow: 0 1px 3px rgba(18, 24, 38, 0.08);
+}
+
+.tab-panel[hidden] {
+  display: none;
+}
+
+/* ── Size & Font controls ───────────────────────────── */
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 8px 10px !important;
+}
+
+.control-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 4px;
+  cursor: default;
+}
+
+.control-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.control-label {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+.control-value {
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+  background: var(--accent-soft);
+  padding: 2px 7px;
+  border-radius: 999px;
+  min-width: 42px;
+  text-align: center;
+}
+
+.control-row input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(29, 78, 216, 0.2), rgba(59, 130, 246, 0.35));
+  outline: none;
+  cursor: pointer;
+}
+
+.control-row input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, var(--accent-bright), var(--accent));
+  box-shadow: 0 1px 4px rgba(29, 78, 216, 0.4);
+  border: 2px solid #fff;
+  cursor: pointer;
+}
+
+.control-row input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, var(--accent-bright), var(--accent));
+  box-shadow: 0 1px 4px rgba(29, 78, 216, 0.4);
+  border: 2px solid #fff;
+  cursor: pointer;
+}
+
+.control-row--select {
+  gap: 8px;
+}
+
+.control-row select {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  background: #fff;
+  border: 1px solid var(--panel-edge);
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.control-row select:focus {
+  border-color: rgba(29, 78, 216, 0.45);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.control-hint {
+  margin: 4px 4px 2px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
 /* ── Footer ─────────────────────────────────────────── */
 
 .footer {

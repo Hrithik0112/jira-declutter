@@ -22,104 +22,197 @@
       <p id="status" class="status" aria-live="polite"></p>
     </header>
 
-    <main class="panels">
-      <section class="panel">
-        <div class="panel-head">
-          <span class="panel-dot" aria-hidden="true"></span>
-          <h2>Layout</h2>
-        </div>
-        <div class="panel-body">
-          <label class="toggle-row">
-            <span class="label-text">Left Sidebar Nav</span>
-            <input type="checkbox" data-section="sidebar" checked>
-            <span class="switch"></span>
-          </label>
-          <label class="toggle-row">
-            <span class="label-text">Top Navigation Bar</span>
-            <input type="checkbox" data-section="topnav" checked>
-            <span class="switch"></span>
-          </label>
-          <label class="toggle-row toggle-row--feature">
-            <span class="label-text">Issue Full Screen</span>
-            <input type="checkbox" data-section="fullscreen">
-            <span class="switch"></span>
-          </label>
-        </div>
-      </section>
+    <nav class="tabs" role="tablist" aria-label="Extension sections">
+      <button type="button" class="tab is-active" role="tab" aria-selected="true" data-tab="visibility" id="tab-visibility">
+        Visibility
+      </button>
+      <button type="button" class="tab" role="tab" aria-selected="false" data-tab="sizing" id="tab-sizing">
+        Size &amp; Font
+      </button>
+    </nav>
 
-      <section class="panel">
-        <div class="panel-head">
-          <span class="panel-dot" aria-hidden="true"></span>
-          <h2>Issue — Main</h2>
-        </div>
-        <div class="panel-body">
-          <label class="toggle-row">
-            <span class="label-text">Description</span>
-            <input type="checkbox" data-section="description" checked>
-            <span class="switch"></span>
-          </label>
-          <label class="toggle-row">
-            <span class="label-text">Attachments</span>
-            <input type="checkbox" data-section="attachments" checked>
-            <span class="switch"></span>
-          </label>
-          <label class="toggle-row">
-            <span class="label-text">Child Issues / Subtasks</span>
-            <input type="checkbox" data-section="childissues" checked>
-            <span class="switch"></span>
-          </label>
-          <label class="toggle-row">
-            <span class="label-text">Linked Issues</span>
-            <input type="checkbox" data-section="linkedissues" checked>
-            <span class="switch"></span>
-          </label>
-          <label class="toggle-row">
-            <span class="label-text">Activity / Comments</span>
-            <input type="checkbox" data-section="activity" checked>
-            <span class="switch"></span>
-          </label>
-        </div>
-      </section>
+    <div class="tab-panels">
+      <!-- ── Visibility ───────────────────────────────── -->
+      <div class="tab-panel is-active" id="panel-visibility" role="tabpanel" aria-labelledby="tab-visibility">
+        <main class="panels">
+          <section class="panel">
+            <div class="panel-head">
+              <span class="panel-dot" aria-hidden="true"></span>
+              <h2>Layout</h2>
+            </div>
+            <div class="panel-body">
+              <label class="toggle-row">
+                <span class="label-text">Left Sidebar Nav</span>
+                <input type="checkbox" data-section="sidebar" checked>
+                <span class="switch"></span>
+              </label>
+              <label class="toggle-row">
+                <span class="label-text">Top Navigation Bar</span>
+                <input type="checkbox" data-section="topnav" checked>
+                <span class="switch"></span>
+              </label>
+              <label class="toggle-row toggle-row--feature">
+                <span class="label-text">Issue Full Screen</span>
+                <input type="checkbox" data-section="fullscreen">
+                <span class="switch"></span>
+              </label>
+            </div>
+          </section>
 
-      <section class="panel">
-        <div class="panel-head">
-          <span class="panel-dot" aria-hidden="true"></span>
-          <h2>Issue — Side Panel</h2>
-        </div>
-        <div class="panel-body">
-          <label class="toggle-row">
-            <span class="label-text">Details (Priority, Labels…)</span>
-            <input type="checkbox" data-section="details" checked>
-            <span class="switch"></span>
-          </label>
-          <label class="toggle-row">
-            <span class="label-text">People (Assignee, Reporter)</span>
-            <input type="checkbox" data-section="people" checked>
-            <span class="switch"></span>
-          </label>
-          <label class="toggle-row">
-            <span class="label-text">Dates</span>
-            <input type="checkbox" data-section="dates" checked>
-            <span class="switch"></span>
-          </label>
-          <label class="toggle-row">
-            <span class="label-text">Development (Branches, PRs)</span>
-            <input type="checkbox" data-section="development" checked>
-            <span class="switch"></span>
-          </label>
-          <label class="toggle-row">
-            <span class="label-text">Time Tracking</span>
-            <input type="checkbox" data-section="timetracking" checked>
-            <span class="switch"></span>
-          </label>
-          <label class="toggle-row">
-            <span class="label-text">Sprint</span>
-            <input type="checkbox" data-section="sprint" checked>
-            <span class="switch"></span>
-          </label>
-        </div>
-      </section>
-    </main>
+          <section class="panel">
+            <div class="panel-head">
+              <span class="panel-dot" aria-hidden="true"></span>
+              <h2>Issue — Main</h2>
+            </div>
+            <div class="panel-body">
+              <label class="toggle-row">
+                <span class="label-text">Description</span>
+                <input type="checkbox" data-section="description" checked>
+                <span class="switch"></span>
+              </label>
+              <label class="toggle-row">
+                <span class="label-text">Attachments</span>
+                <input type="checkbox" data-section="attachments" checked>
+                <span class="switch"></span>
+              </label>
+              <label class="toggle-row">
+                <span class="label-text">Child Issues / Subtasks</span>
+                <input type="checkbox" data-section="childissues" checked>
+                <span class="switch"></span>
+              </label>
+              <label class="toggle-row">
+                <span class="label-text">Linked Issues</span>
+                <input type="checkbox" data-section="linkedissues" checked>
+                <span class="switch"></span>
+              </label>
+              <label class="toggle-row">
+                <span class="label-text">Activity / Comments</span>
+                <input type="checkbox" data-section="activity" checked>
+                <span class="switch"></span>
+              </label>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
+              <span class="panel-dot" aria-hidden="true"></span>
+              <h2>Issue — Side Panel</h2>
+            </div>
+            <div class="panel-body">
+              <label class="toggle-row">
+                <span class="label-text">Details (Assignee, Reporter…)</span>
+                <input type="checkbox" data-section="details" checked>
+                <span class="switch"></span>
+              </label>
+              <label class="toggle-row">
+                <span class="label-text">Development</span>
+                <input type="checkbox" data-section="development" checked>
+                <span class="switch"></span>
+              </label>
+              <label class="toggle-row">
+                <span class="label-text">More fields (Estimate, Time…)</span>
+                <input type="checkbox" data-section="morefields" checked>
+                <span class="switch"></span>
+              </label>
+              <label class="toggle-row">
+                <span class="label-text">Automation</span>
+                <input type="checkbox" data-section="automation" checked>
+                <span class="switch"></span>
+              </label>
+              <label class="toggle-row">
+                <span class="label-text">People (legacy layout)</span>
+                <input type="checkbox" data-section="people" checked>
+                <span class="switch"></span>
+              </label>
+              <label class="toggle-row">
+                <span class="label-text">Dates</span>
+                <input type="checkbox" data-section="dates" checked>
+                <span class="switch"></span>
+              </label>
+              <label class="toggle-row">
+                <span class="label-text">Time Tracking</span>
+                <input type="checkbox" data-section="timetracking" checked>
+                <span class="switch"></span>
+              </label>
+              <label class="toggle-row">
+                <span class="label-text">Sprint</span>
+                <input type="checkbox" data-section="sprint" checked>
+                <span class="switch"></span>
+              </label>
+              <label class="toggle-row">
+                <span class="label-text">Created / Updated</span>
+                <input type="checkbox" data-section="timestamps" checked>
+                <span class="switch"></span>
+              </label>
+            </div>
+          </section>
+        </main>
+      </div>
+
+      <!-- ── Size & Font ──────────────────────────────── -->
+      <div class="tab-panel" id="panel-sizing" role="tabpanel" aria-labelledby="tab-sizing" hidden>
+        <main class="panels">
+          <section class="panel">
+            <div class="panel-head">
+              <span class="panel-dot" aria-hidden="true"></span>
+              <h2>Issue Layout</h2>
+            </div>
+            <div class="panel-body controls">
+              <label class="control-row">
+                <div class="control-meta">
+                  <span class="control-label">Main content width</span>
+                  <span class="control-value" id="val-contentWidth">100%</span>
+                </div>
+                <input type="range" data-sizing="contentWidth" min="60" max="140" step="5" value="100">
+              </label>
+              <label class="control-row">
+                <div class="control-meta">
+                  <span class="control-label">Side panel width</span>
+                  <span class="control-value" id="val-sideWidth">100%</span>
+                </div>
+                <input type="range" data-sizing="sideWidth" min="50" max="160" step="5" value="100">
+              </label>
+              <label class="control-row">
+                <div class="control-meta">
+                  <span class="control-label">Content spacing</span>
+                  <span class="control-value" id="val-spacing">100%</span>
+                </div>
+                <input type="range" data-sizing="spacing" min="60" max="150" step="5" value="100">
+              </label>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
+              <span class="panel-dot" aria-hidden="true"></span>
+              <h2>Typography</h2>
+            </div>
+            <div class="panel-body controls">
+              <label class="control-row">
+                <div class="control-meta">
+                  <span class="control-label">Font size</span>
+                  <span class="control-value" id="val-fontScale">100%</span>
+                </div>
+                <input type="range" data-sizing="fontScale" min="80" max="140" step="5" value="100">
+              </label>
+              <label class="control-row control-row--select">
+                <div class="control-meta">
+                  <span class="control-label">Font family</span>
+                </div>
+                <select data-sizing="fontFamily" id="fontFamily">
+                  <option value="default">Jira default</option>
+                  <option value="system">System UI</option>
+                  <option value="sans">Clean Sans</option>
+                  <option value="serif">Readable Serif</option>
+                  <option value="mono">Monospace</option>
+                </select>
+              </label>
+              <p class="control-hint">Open an issue (or issue modal) to preview these changes.</p>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
 
     <footer class="footer">
       <button id="reset-btn" type="button">Reset all</button>

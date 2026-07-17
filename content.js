@@ -14,7 +14,8 @@ window.__jiraDeclutterLoaded = true;
 const SECTIONS = [
   'sidebar', 'topnav',
   'description', 'attachments', 'childissues', 'linkedissues', 'activity',
-  'details', 'people', 'dates', 'development', 'timetracking', 'sprint'
+  'details', 'development', 'morefields', 'automation',
+  'people', 'dates', 'timetracking', 'sprint', 'timestamps'
 ];
 
 const LAYOUT_TAG = {
@@ -40,7 +41,84 @@ function applyState(state) {
   } else {
     root.classList.remove('jd-fullscreen-issue');
   }
+
+  applySizing(state);
+
+  // Hide bordered shells left behind after section content is toggled off
+  requestAnimationFrame(() => scrubEmptySideCards());
 }
+
+const FONT_FAMILIES = {
+  default: '',
+  system: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+  sans: '"Helvetica Neue", Helvetica, Arial, sans-serif',
+  serif: 'Georgia, "Times New Roman", Times, serif',
+  mono: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace'
+};
+
+function applySizing(state) {
+  const root = document.documentElement;
+  const contentWidth = Number(state.contentWidth ?? 100);
+  const sideWidth = Number(state.sideWidth ?? 100);
+  const spacing = Number(state.spacing ?? 100);
+  const fontScale = Number(state.fontScale ?? 100);
+  const fontFamily = state.fontFamily || 'default';
+
+  root.style.setProperty('--jd-main-scale', String(contentWidth / 100));
+  root.style.setProperty('--jd-side-scale', String(sideWidth / 100));
+  root.style.setProperty('--jd-space-scale', String(spacing / 100));
+  root.style.setProperty('--jd-font-scale', String(fontScale / 100));
+
+  const family = FONT_FAMILIES[fontFamily] || '';
+  if (family) {
+    root.style.setProperty('--jd-font-family', family);
+    root.classList.add('jd-custom-font');
+  } else {
+    root.style.removeProperty('--jd-font-family');
+    root.classList.remove('jd-custom-font');
+  }
+
+  // Separate class so zoom only runs when font actually changes
+  root.classList.toggle('jd-font-scaled', fontScale !== 100);
+
+  const sizingOn =
+    contentWidth !== 100 ||
+    sideWidth !== 100 ||
+    spacing !== 100 ||
+    fontScale !== 100 ||
+    fontFamily !== 'default';
+
+  root.classList.toggle('jd-sizing', sizingOn);
+  tagIssueRoot();
+}
+
+function tagIssueRoot() {
+  const cls = 'jd-issue-root';
+  clearTagged(cls);
+
+  const candidates = [
+    '[data-testid="issue.views.issue-details.issue-layout.issue-layout"]',
+    '.jd-section-issuemodal',
+    '[role="dialog"]:has([data-testid*="issue.views" i])',
+    '[data-testid*="issue-view-modal" i]',
+    '[data-testid="software-board.card-modal"]'
+  ];
+
+  for (const sel of candidates) {
+    let el = null;
+    try {
+      el = document.querySelector(sel);
+    } catch (_) {
+      continue;
+    }
+    if (el) {
+      el.classList.add(cls);
+      return;
+    }
+  }
+}
+
+
 
 function clearTagged(cls) {
   document.querySelectorAll('.' + cls).forEach((el) => el.classList.remove(cls));
@@ -207,9 +285,27 @@ function tagIssueSections() {
       '[data-testid*="comment" i]'
     ],
     details: [
-      '[data-testid="issue.views.issue-base.foundation.details.section"]',
-      '[data-testid="issue-view-foundation-details-section"]',
-      '#details-module'
+      '[data-vc="issue-view-context-items-details-panel-slot"]',
+      '[data-vc="issue-view-context-group-details-group"]',
+      '[data-testid="issue-view-layout-templates-views.ui.context.visible-hidden.ui.context-group.container.details-group"]',
+      '[data-testid*="container.details-group"]',
+      '[data-vc="details-group-header"]'
+    ],
+    development: [
+      '[data-vc="issue-view-development-context-panel"]',
+      '[data-testid="issue-view-layout-templates-views.ui.context.visible-hidden.ui.context-group.container.development-context-panel"]'
+    ],
+    morefields: [
+      '[data-vc="issue-view-context-group-secondary-context-items"]',
+      '[data-testid="issue-view-layout-templates-views.ui.context.visible-hidden.ui.context-group.container.secondary-context-items"]',
+      '[data-testid*="container.secondary-context-items"]',
+      '[data-vc="secondary-context-items-header"]'
+    ],
+    automation: [
+      '[data-vc="issue-view-automation-apps-panel"]',
+      '[data-testid="issue-view-layout-templates-views.ui.context.visible-hidden.ui.ecosystem-context-group.container.automation-issue-audit-log-panel"]',
+      '[data-testid*="container.automation-issue-audit-log-panel"]',
+      '[data-vc*="automation-issue-audit-log-panel"]'
     ],
     people: [
       '[data-testid="issue.views.issue-base.foundation.people.section"]',
@@ -221,11 +317,6 @@ function tagIssueSections() {
       '[data-testid="issue-view-foundation-dates-section"]',
       '#datesmodule'
     ],
-    development: [
-      '[data-testid="issue.views.issue-base.foundation.development.section"]',
-      '[data-testid="issue-view-foundation-development-section"]',
-      '#devstatus-container'
-    ],
     timetracking: [
       '[data-testid="issue.views.issue-base.foundation.time-tracking.section"]',
       '#timetrackingmodule'
@@ -233,13 +324,127 @@ function tagIssueSections() {
     sprint: [
       '[data-testid="issue.views.issue-base.foundation.sprint.section"]',
       '#sprint-val'
+    ],
+    timestamps: [
+      '[data-testid*="created-date" i]',
+      '[data-testid*="updated-date" i]',
+      '[data-testid*="issue.views.issue-base.foundation.dates" i]'
     ]
   };
 
   Object.entries(map).forEach(([section, selectors]) => {
     const cls = `jd-section-${section}`;
-    // Keep existing tags; re-apply matches (idempotent)
+    // Clear stale tags so a wrong parent from a previous pass can't keep hiding everything
+    clearTagged(cls);
     tagMatches(selectors, cls);
+  });
+
+  // Prefer outermost context-panel roots (stable data-vc from Jira issue layout)
+  tagContextPanels({
+    details: ['details-panel-slot', 'details-group', 'details-context-panel'],
+    development: ['development-context-panel'],
+    morefields: ['secondary-context-items'],
+    automation: ['automation-apps-panel', 'automation-issue-audit-log-panel']
+  });
+
+  tagTimestamps();
+}
+
+/**
+ * Tag only the outermost issue-view panel for each side section.
+ * Development: data-vc="issue-view-development-context-panel"
+ * Automation:  data-vc="issue-view-automation-apps-panel"
+ */
+function tagContextPanels(keyMap) {
+  Object.entries(keyMap).forEach(([section, slugs]) => {
+    const cls = `jd-section-${section}`;
+    const slugList = Array.isArray(slugs) ? slugs : [slugs];
+
+    slugList.forEach((slug) => {
+      const selectors = [
+        `[data-vc="issue-view-${slug}"]`,
+        `[data-vc*="${slug}"]`,
+        `[data-testid*="${slug}"]`
+      ];
+
+      selectors.forEach((sel) => {
+        try {
+          document.querySelectorAll(sel).forEach((el) => {
+            // Prefer the known outermost roots when present
+            const outer =
+              el.closest(`[data-vc="issue-view-${slug}"]`) ||
+              el.closest(`[data-vc="issue-view-automation-apps-panel"]`) ||
+              el.closest(`[data-vc="issue-view-development-context-panel"]`) ||
+              el.closest(`[data-vc="issue-view-context-items-details-panel-slot"]`) ||
+              el.closest(`[data-vc="issue-view-context-group-details-group"]`) ||
+              el.closest(`[data-vc="issue-view-context-group-secondary-context-items"]`) ||
+              el.closest(`[data-testid*="container.secondary-context-items"]`) ||
+              el.closest(`[data-testid*="container.details-group"]`) ||
+              el.closest(`[data-testid*="container.${slug}"]`) ||
+              el;
+
+            // Don't tag a node that already sits inside a same-section outer card
+            if (outer.parentElement && outer.parentElement.closest(`.${cls}`)) {
+              return;
+            }
+            outer.classList.add(cls, 'jd-accordion-card');
+          });
+        } catch (_) {
+          /* ignore */
+        }
+      });
+    });
+  });
+}
+
+/**
+ * After hides apply, remove leftover empty bordered shells
+ * only for cards we explicitly tagged as accordion items.
+ */
+function scrubEmptySideCards() {
+  document.querySelectorAll('.jd-empty-shell').forEach((el) => {
+    el.classList.remove('jd-empty-shell');
+  });
+
+  const root = document.documentElement;
+  const hideMap = [
+    ['jd-hide-details', 'jd-section-details'],
+    ['jd-hide-development', 'jd-section-development'],
+    ['jd-hide-morefields', 'jd-section-morefields'],
+    ['jd-hide-automation', 'jd-section-automation']
+  ];
+
+  hideMap.forEach(([hideCls, sectionCls]) => {
+    if (!root.classList.contains(hideCls)) return;
+
+    document.querySelectorAll('.' + sectionCls + '.jd-accordion-card').forEach((el) => {
+      const style = window.getComputedStyle(el);
+      if (style.display === 'none') return;
+      const text = (el.innerText || '').replace(/\s+/g, ' ').trim();
+      const rect = el.getBoundingClientRect();
+      if (text === '' && rect.height > 0 && rect.height < 160) {
+        el.classList.add('jd-empty-shell');
+      }
+    });
+  });
+}
+
+function tagTimestamps() {
+  const cls = 'jd-section-timestamps';
+  document.querySelectorAll('span, div, p, dd, time').forEach((el) => {
+    if (el.children.length > 3) return;
+    const text = (el.textContent || '').trim();
+    if (/^Created\b/i.test(text) || /^Updated\b/i.test(text)) {
+      // Tag a small wrapper, not a huge ancestor
+      let node = el;
+      for (let i = 0; i < 3 && node; i++) {
+        const rect = node.getBoundingClientRect();
+        if (rect.height > 0 && rect.height < 80 && rect.width < 480) {
+          node.classList.add(cls);
+        }
+        node = node.parentElement;
+      }
+    }
   });
 }
 
@@ -306,6 +511,7 @@ function retagDom() {
   tagTopNav();
   tagIssueModal();
   tagIssueSections();
+  tagIssueRoot();
 }
 
 function loadAndApply() {
