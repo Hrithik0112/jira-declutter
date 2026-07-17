@@ -47,6 +47,56 @@ html.jd-hide-topnav [role="banner"] {
   display: none !important;
 }
 
+/* Issue modal / panel → fill the viewport (single shell only — avoid stacked white layers) */
+html.jd-fullscreen-issue {
+  overflow: hidden !important;
+}
+
+html.jd-fullscreen-issue .jd-section-issuemodal-wrap {
+  width: 100% !important;
+  max-width: 100vw !important;
+  height: 100% !important;
+  max-height: 100vh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  transform: none !important;
+  inset: 0 !important;
+}
+
+/* Kill the empty full-screen white scroller behind the modal */
+html.jd-fullscreen-issue .jd-section-issuemodal-scroll {
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
+}
+
+html.jd-fullscreen-issue .jd-section-issuemodal {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  max-width: 100vw !important;
+  height: 100vh !important;
+  max-height: 100vh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  transform: none !important;
+  box-sizing: border-box !important;
+  overflow: auto !important;
+  background: var(--ds-surface, #fff) !important;
+  z-index: 510 !important;
+}
+
+/* Stretch layout inside the modal without creating a second full-screen scroller */
+html.jd-fullscreen-issue .jd-section-issuemodal > * {
+  max-width: none !important;
+  width: 100% !important;
+  min-height: 100% !important;
+  height: auto !important;
+  max-height: none !important;
+  border-radius: 0 !important;
+  box-sizing: border-box !important;
+}
+
 
 /* ── Issue Detail — Main Content ───────────────────── */
 

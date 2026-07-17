@@ -19,7 +19,8 @@ const SECTIONS = [
 
 const LAYOUT_TAG = {
   sidebar: 'jd-section-sidebar',
-  topnav: 'jd-section-topnav'
+  topnav: 'jd-section-topnav',
+  issuemodal: 'jd-section-issuemodal'
 };
 
 function applyState(state) {
@@ -32,6 +33,13 @@ function applyState(state) {
       root.classList.remove(cls);
     }
   });
+
+  // Fullscreen is opt-in (true = expand issue modal)
+  if (state.fullscreen === true) {
+    root.classList.add('jd-fullscreen-issue');
+  } else {
+    root.classList.remove('jd-fullscreen-issue');
+  }
 }
 
 function clearTagged(cls) {
@@ -235,9 +243,68 @@ function tagIssueSections() {
   });
 }
 
+function tagIssueModal() {
+  const cls = LAYOUT_TAG.issuemodal;
+  const wrapCls = cls + '-wrap';
+  clearTagged(cls);
+  clearTagged(wrapCls);
+  clearTagged('jd-section-issuemodal-scroll');
+
+  const issueContentSel = [
+    '[data-testid="issue.views.issue-details.issue-layout.issue-layout"]',
+    '[data-testid="issue.views.issue-details.issue-layout.container-left"]',
+    '[data-testid="issue.views.issue-base.foundation.summary.heading"]',
+    '[data-testid*="issue.views.issue-details" i]',
+    '[data-testid="issue-view"]',
+    '#jira-issue-header'
+  ].join(',');
+
+  const shells = new Set();
+
+  function tagShell(shell) {
+    if (!shell || shells.has(shell)) return;
+    shells.add(shell);
+    shell.classList.add(cls);
+
+    // Loosen the immediate parent; hide overflow on scroll portals (the white blank scroller)
+    let node = shell.parentElement;
+    for (let i = 0; i < 6 && node && node !== document.body; i++) {
+      if (i === 0) node.classList.add(wrapCls);
+      const style = window.getComputedStyle(node);
+      if (/(auto|scroll)/.test(style.overflow + style.overflowY + style.overflowX)) {
+        node.classList.add('jd-section-issuemodal-scroll');
+      }
+      node = node.parentElement;
+    }
+  }
+
+  // Prefer the outermost dialog / modal shell that contains an issue
+  document.querySelectorAll('[role="dialog"]').forEach((dialog) => {
+    if (!dialog.querySelector(issueContentSel)) return;
+    tagShell(dialog);
+  });
+
+  document.querySelectorAll(
+    '[data-testid="software-board.card-modal"], [data-testid*="issue-view-modal" i], [data-testid*="IssueViewModal" i]'
+  ).forEach((el) => tagShell(el));
+
+  // Fallback: issue layout inside a modal, but only if no dialog was tagged
+  if (shells.size === 0) {
+    document.querySelectorAll(
+      '[data-testid="issue.views.issue-details.issue-layout.issue-layout"]'
+    ).forEach((el) => {
+      const overlay = el.closest(
+        '[role="dialog"], [data-testid*="modal" i], [data-testid*="Modal" i], [data-testid="software-board.card-modal"]'
+      );
+      if (overlay) tagShell(overlay);
+    });
+  }
+}
+
 function retagDom() {
   tagSidebar();
   tagTopNav();
+  tagIssueModal();
   tagIssueSections();
 }
 

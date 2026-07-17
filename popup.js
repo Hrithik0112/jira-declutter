@@ -1,6 +1,7 @@
 const DEFAULTS = {
   sidebar: true,
   topnav: true,
+  fullscreen: false,
   description: true,
   attachments: true,
   childissues: true,
@@ -142,10 +143,10 @@ async function initConnectionStatus() {
 
 // Load saved state
 chrome.storage.sync.get('jiraDeclutter', (result) => {
-  const state = result.jiraDeclutter || { ...DEFAULTS };
+  const state = { ...DEFAULTS, ...(result.jiraDeclutter || {}) };
   checkboxes.forEach((cb) => {
     const key = cb.dataset.section;
-    cb.checked = state[key] !== false;
+    cb.checked = !!state[key];
   });
 });
 

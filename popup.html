@@ -2,95 +2,127 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>Jira Declutter</h1>
-      <p class="subtitle">Toggle what you see on issue pages</p>
+  <div class="shell">
+    <header class="hero">
+      <div class="hero-top">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">J</span>
+          <div class="brand-text">
+            <h1>Declutter</h1>
+            <p class="subtitle">Trim the noise on Jira</p>
+          </div>
+        </div>
+      </div>
       <p id="status" class="status" aria-live="polite"></p>
     </header>
 
-    <div class="section-group">
-      <div class="group-label">Layout</div>
-      <label class="toggle-row">
-        <span class="label-text">Left Sidebar Nav</span>
-        <input type="checkbox" data-section="sidebar" checked>
-        <span class="switch"></span>
-      </label>
-      <label class="toggle-row">
-        <span class="label-text">Top Navigation Bar</span>
-        <input type="checkbox" data-section="topnav" checked>
-        <span class="switch"></span>
-      </label>
-    </div>
+    <main class="panels">
+      <section class="panel">
+        <div class="panel-head">
+          <span class="panel-dot" aria-hidden="true"></span>
+          <h2>Layout</h2>
+        </div>
+        <div class="panel-body">
+          <label class="toggle-row">
+            <span class="label-text">Left Sidebar Nav</span>
+            <input type="checkbox" data-section="sidebar" checked>
+            <span class="switch"></span>
+          </label>
+          <label class="toggle-row">
+            <span class="label-text">Top Navigation Bar</span>
+            <input type="checkbox" data-section="topnav" checked>
+            <span class="switch"></span>
+          </label>
+          <label class="toggle-row toggle-row--feature">
+            <span class="label-text">Issue Full Screen</span>
+            <input type="checkbox" data-section="fullscreen">
+            <span class="switch"></span>
+          </label>
+        </div>
+      </section>
 
-    <div class="section-group">
-      <div class="group-label">Issue Detail — Main</div>
-      <label class="toggle-row">
-        <span class="label-text">Description</span>
-        <input type="checkbox" data-section="description" checked>
-        <span class="switch"></span>
-      </label>
-      <label class="toggle-row">
-        <span class="label-text">Attachments</span>
-        <input type="checkbox" data-section="attachments" checked>
-        <span class="switch"></span>
-      </label>
-      <label class="toggle-row">
-        <span class="label-text">Child Issues / Subtasks</span>
-        <input type="checkbox" data-section="childissues" checked>
-        <span class="switch"></span>
-      </label>
-      <label class="toggle-row">
-        <span class="label-text">Linked Issues</span>
-        <input type="checkbox" data-section="linkedissues" checked>
-        <span class="switch"></span>
-      </label>
-      <label class="toggle-row">
-        <span class="label-text">Activity / Comments</span>
-        <input type="checkbox" data-section="activity" checked>
-        <span class="switch"></span>
-      </label>
-    </div>
+      <section class="panel">
+        <div class="panel-head">
+          <span class="panel-dot" aria-hidden="true"></span>
+          <h2>Issue — Main</h2>
+        </div>
+        <div class="panel-body">
+          <label class="toggle-row">
+            <span class="label-text">Description</span>
+            <input type="checkbox" data-section="description" checked>
+            <span class="switch"></span>
+          </label>
+          <label class="toggle-row">
+            <span class="label-text">Attachments</span>
+            <input type="checkbox" data-section="attachments" checked>
+            <span class="switch"></span>
+          </label>
+          <label class="toggle-row">
+            <span class="label-text">Child Issues / Subtasks</span>
+            <input type="checkbox" data-section="childissues" checked>
+            <span class="switch"></span>
+          </label>
+          <label class="toggle-row">
+            <span class="label-text">Linked Issues</span>
+            <input type="checkbox" data-section="linkedissues" checked>
+            <span class="switch"></span>
+          </label>
+          <label class="toggle-row">
+            <span class="label-text">Activity / Comments</span>
+            <input type="checkbox" data-section="activity" checked>
+            <span class="switch"></span>
+          </label>
+        </div>
+      </section>
 
-    <div class="section-group">
-      <div class="group-label">Issue Detail — Side Panel</div>
-      <label class="toggle-row">
-        <span class="label-text">Details (Priority, Labels…)</span>
-        <input type="checkbox" data-section="details" checked>
-        <span class="switch"></span>
-      </label>
-      <label class="toggle-row">
-        <span class="label-text">People (Assignee, Reporter)</span>
-        <input type="checkbox" data-section="people" checked>
-        <span class="switch"></span>
-      </label>
-      <label class="toggle-row">
-        <span class="label-text">Dates</span>
-        <input type="checkbox" data-section="dates" checked>
-        <span class="switch"></span>
-      </label>
-      <label class="toggle-row">
-        <span class="label-text">Development (Branches, PRs)</span>
-        <input type="checkbox" data-section="development" checked>
-        <span class="switch"></span>
-      </label>
-      <label class="toggle-row">
-        <span class="label-text">Time Tracking</span>
-        <input type="checkbox" data-section="timetracking" checked>
-        <span class="switch"></span>
-      </label>
-      <label class="toggle-row">
-        <span class="label-text">Sprint</span>
-        <input type="checkbox" data-section="sprint" checked>
-        <span class="switch"></span>
-      </label>
-    </div>
+      <section class="panel">
+        <div class="panel-head">
+          <span class="panel-dot" aria-hidden="true"></span>
+          <h2>Issue — Side Panel</h2>
+        </div>
+        <div class="panel-body">
+          <label class="toggle-row">
+            <span class="label-text">Details (Priority, Labels…)</span>
+            <input type="checkbox" data-section="details" checked>
+            <span class="switch"></span>
+          </label>
+          <label class="toggle-row">
+            <span class="label-text">People (Assignee, Reporter)</span>
+            <input type="checkbox" data-section="people" checked>
+            <span class="switch"></span>
+          </label>
+          <label class="toggle-row">
+            <span class="label-text">Dates</span>
+            <input type="checkbox" data-section="dates" checked>
+            <span class="switch"></span>
+          </label>
+          <label class="toggle-row">
+            <span class="label-text">Development (Branches, PRs)</span>
+            <input type="checkbox" data-section="development" checked>
+            <span class="switch"></span>
+          </label>
+          <label class="toggle-row">
+            <span class="label-text">Time Tracking</span>
+            <input type="checkbox" data-section="timetracking" checked>
+            <span class="switch"></span>
+          </label>
+          <label class="toggle-row">
+            <span class="label-text">Sprint</span>
+            <input type="checkbox" data-section="sprint" checked>
+            <span class="switch"></span>
+          </label>
+        </div>
+      </section>
+    </main>
 
-    <footer>
-      <button id="reset-btn">Reset All</button>
+    <footer class="footer">
+      <button id="reset-btn" type="button">Reset all</button>
     </footer>
   </div>
 
