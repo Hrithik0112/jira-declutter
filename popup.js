@@ -2,6 +2,8 @@ const DEFAULTS = {
   sidebar: true,
   topnav: true,
   fullscreen: false,
+  linearView: false,
+  linearDark: false,
   description: true,
   attachments: true,
   childissues: true,
@@ -40,8 +42,8 @@ function isJiraUrl(url) {
     const host = u.hostname.toLowerCase();
     return (
       host.endsWith('.atlassian.net') ||
-      host === 'login.jira.unifize.com' ||
-      host.endsWith('.jira.unifize.com')
+      host === 'login.jira.your-company.com' ||
+      host.endsWith('.jira.your-company.com')
     );
   } catch (_) {
     return false;
@@ -79,11 +81,11 @@ async function ensureContentScript(tab) {
   try {
     await chrome.scripting.insertCSS({
       target: { tabId: tab.id },
-      files: ['content.css']
+      files: ['content.css', 'linear-view.css']
     });
     await chrome.scripting.executeScript({
       target: { tabId: tab.id },
-      files: ['content.js']
+      files: ['content.js', 'linear-view.js']
     });
   } catch (err) {
     return { ok: false, reason: 'inject-failed', error: String(err) };
@@ -114,8 +116,12 @@ async function pushToActiveTab(state) {
 
   const href = tab.url || '';
   const onIssue = /\/browse\/[A-Z][A-Z0-9]+-\d+/i.test(href) || /selectedIssue=/i.test(href);
-  if (!onIssue) {
+  if (state.linearView && !onIssue) {
+    setStatus('Linear view on — open an issue to see it.', 'info');
+  } else if (!onIssue) {
     setStatus('Layout toggles work here. Open an issue for size & font.', 'info');
+  } else if (state.linearView) {
+    setStatus('Linear view active on this issue.', 'ok');
   } else {
     setStatus('Connected to Jira', 'ok');
   }
@@ -150,6 +156,13 @@ function updateSizingLabels(state) {
   });
 }
 
+function syncLinearDarkRow(state) {
+  const row = document.getElementById('linear-dark-row');
+  if (!row) return;
+  const on = !!(state?.linearView ?? document.getElementById('linear-view-toggle')?.checked);
+  row.hidden = !on;
+}
+
 function applyControlsToUi(state) {
   checkboxes.forEach((cb) => {
     const key = cb.dataset.section;
@@ -161,11 +174,13 @@ function applyControlsToUi(state) {
     input.value = state[key];
   });
   updateSizingLabels(state);
+  syncLinearDarkRow(state);
 }
 
 function saveAndPush() {
   const state = collectState();
   updateSizingLabels(state);
+  syncLinearDarkRow(state);
   chrome.storage.sync.set({ jiraDeclutter: state });
   pushToActiveTab(state);
 }

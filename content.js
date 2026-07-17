@@ -44,6 +44,12 @@ function applyState(state) {
 
   applySizing(state);
 
+  // Linear-style issue overlay (scrapes DOM → cleaner UI)
+  if (window.JDLinearView) {
+    window.JDLinearView.setDark(state.linearDark === true);
+    window.JDLinearView.setEnabled(state.linearView === true);
+  }
+
   // Hide bordered shells left behind after section content is toggled off
   requestAnimationFrame(() => scrubEmptySideCards());
 }

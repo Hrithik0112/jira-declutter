@@ -29,6 +29,9 @@
       <button type="button" class="tab" role="tab" aria-selected="false" data-tab="sizing" id="tab-sizing">
         Size &amp; Font
       </button>
+      <button type="button" class="tab" role="tab" aria-selected="false" data-tab="linear" id="tab-linear">
+        Linear
+      </button>
     </nav>
 
     <div class="tab-panels">
@@ -144,6 +147,33 @@
                 <input type="checkbox" data-section="timestamps" checked>
                 <span class="switch"></span>
               </label>
+            </div>
+          </section>
+        </main>
+      </div>
+
+      <!-- ── Linear View ─────────────────────────────── -->
+      <div class="tab-panel" id="panel-linear" role="tabpanel" aria-labelledby="tab-linear" hidden>
+        <main class="panels">
+          <section class="panel">
+            <div class="panel-head">
+              <span class="panel-dot" aria-hidden="true"></span>
+              <h2>Issue View</h2>
+            </div>
+            <div class="panel-body">
+              <label class="toggle-row toggle-row--feature">
+                <span class="label-text">Linear-style overlay</span>
+                <input type="checkbox" data-section="linearView" id="linear-view-toggle">
+                <span class="switch"></span>
+              </label>
+              <label class="toggle-row toggle-row--feature" id="linear-dark-row" hidden>
+                <span class="label-text">Dark mode</span>
+                <input type="checkbox" data-section="linearDark" id="linear-dark-toggle">
+                <span class="switch"></span>
+              </label>
+              <p class="control-hint" style="padding: 4px 8px 8px;">
+                Open an issue, enable Linear, then optionally Dark. Empty fields stay hidden. Read-only — close with ✕.
+              </p>
             </div>
           </section>
         </main>
