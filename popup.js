@@ -8,14 +8,23 @@ const DEFAULTS = {
   linkedissues: true,
   activity: true,
   details: true,
+  development: true,
+  morefields: true,
+  automation: true,
   people: true,
   dates: true,
-  development: true,
   timetracking: true,
-  sprint: true
+  sprint: true,
+  timestamps: true,
+  contentWidth: 100,
+  sideWidth: 100,
+  spacing: 100,
+  fontScale: 100,
+  fontFamily: 'default'
 };
 
 const checkboxes = document.querySelectorAll('input[data-section]');
+const sizingInputs = document.querySelectorAll('[data-sizing]');
 const statusEl = document.getElementById('status');
 
 function setStatus(text, kind) {
@@ -67,7 +76,6 @@ async function ensureContentScript(tab) {
   let response = await sendToTab(tab.id, { type: 'JIRA_DECLUTTER_PING' });
   if (response?.ok) return { ok: true, injected: false };
 
-  // Content script missing (common after Load unpacked) — inject it now
   try {
     await chrome.scripting.insertCSS({
       target: { tabId: tab.id },
@@ -107,10 +115,59 @@ async function pushToActiveTab(state) {
   const href = tab.url || '';
   const onIssue = /\/browse\/[A-Z][A-Z0-9]+-\d+/i.test(href) || /selectedIssue=/i.test(href);
   if (!onIssue) {
-    setStatus('Layout toggles work here. Open an issue for the rest.', 'info');
+    setStatus('Layout toggles work here. Open an issue for size & font.', 'info');
   } else {
     setStatus('Connected to Jira', 'ok');
   }
+}
+
+function collectState() {
+  const state = { ...DEFAULTS };
+  checkboxes.forEach((c) => {
+    state[c.dataset.section] = c.checked;
+  });
+  sizingInputs.forEach((input) => {
+    const key = input.dataset.sizing;
+    if (input.type === 'range') {
+      state[key] = Number(input.value);
+    } else {
+      state[key] = input.value;
+    }
+  });
+  return state;
+}
+
+function updateSizingLabels(state) {
+  const map = {
+    contentWidth: 'val-contentWidth',
+    sideWidth: 'val-sideWidth',
+    spacing: 'val-spacing',
+    fontScale: 'val-fontScale'
+  };
+  Object.entries(map).forEach(([key, id]) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = `${state[key]}%`;
+  });
+}
+
+function applyControlsToUi(state) {
+  checkboxes.forEach((cb) => {
+    const key = cb.dataset.section;
+    cb.checked = !!state[key];
+  });
+  sizingInputs.forEach((input) => {
+    const key = input.dataset.sizing;
+    if (state[key] === undefined) return;
+    input.value = state[key];
+  });
+  updateSizingLabels(state);
+}
+
+function saveAndPush() {
+  const state = collectState();
+  updateSizingLabels(state);
+  chrome.storage.sync.set({ jiraDeclutter: state });
+  pushToActiveTab(state);
 }
 
 async function initConnectionStatus() {
@@ -135,36 +192,46 @@ async function initConnectionStatus() {
   if (ready.injected) {
     setStatus('Connected (injected). Try the Layout toggles.', 'ok');
   } else if (!onIssue) {
-    setStatus('On a board — Layout toggles work; open an issue for the rest.', 'info');
+    setStatus('On a board — open an issue for size & font.', 'info');
   } else {
     setStatus('Connected to issue page', 'ok');
   }
 }
 
+// Tabs
+document.querySelectorAll('.tab').forEach((tab) => {
+  tab.addEventListener('click', () => {
+    const name = tab.dataset.tab;
+    document.querySelectorAll('.tab').forEach((t) => {
+      const active = t.dataset.tab === name;
+      t.classList.toggle('is-active', active);
+      t.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+    document.querySelectorAll('.tab-panel').forEach((panel) => {
+      const active = panel.id === `panel-${name}`;
+      panel.classList.toggle('is-active', active);
+      panel.hidden = !active;
+    });
+  });
+});
+
 // Load saved state
 chrome.storage.sync.get('jiraDeclutter', (result) => {
   const state = { ...DEFAULTS, ...(result.jiraDeclutter || {}) };
-  checkboxes.forEach((cb) => {
-    const key = cb.dataset.section;
-    cb.checked = !!state[key];
-  });
+  applyControlsToUi(state);
 });
 
-// When a toggle changes, save + push to content script
 checkboxes.forEach((cb) => {
-  cb.addEventListener('change', () => {
-    const state = {};
-    checkboxes.forEach((c) => {
-      state[c.dataset.section] = c.checked;
-    });
-    chrome.storage.sync.set({ jiraDeclutter: state });
-    pushToActiveTab(state);
-  });
+  cb.addEventListener('change', saveAndPush);
 });
 
-// Reset button
+sizingInputs.forEach((input) => {
+  const eventName = input.type === 'range' ? 'input' : 'change';
+  input.addEventListener(eventName, saveAndPush);
+});
+
 document.getElementById('reset-btn').addEventListener('click', () => {
-  checkboxes.forEach((cb) => { cb.checked = true; });
+  applyControlsToUi({ ...DEFAULTS });
   chrome.storage.sync.set({ jiraDeclutter: { ...DEFAULTS } });
   pushToActiveTab({ ...DEFAULTS });
 });

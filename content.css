@@ -146,11 +146,12 @@ html.jd-hide-activity #activitymodule {
 
 /* ── Issue Detail — Side Panel ─────────────────────── */
 
-/* Details (priority, labels, components, fix versions…) */
+/* Details — details-panel-slot / details-group from live DOM */
 html.jd-hide-details .jd-section-details,
-html.jd-hide-details [data-testid="issue.views.issue-base.foundation.details.section"],
-html.jd-hide-details [data-testid="issue-view-foundation-details-section"],
-html.jd-hide-details #details-module {
+html.jd-hide-details [data-vc="issue-view-context-items-details-panel-slot"],
+html.jd-hide-details [data-vc="issue-view-context-group-details-group"],
+html.jd-hide-details [data-testid="issue-view-layout-templates-views.ui.context.visible-hidden.ui.context-group.container.details-group"],
+html.jd-hide-details [data-testid*="container.details-group"] {
   display: none !important;
 }
 
@@ -170,12 +171,38 @@ html.jd-hide-dates #datesmodule {
   display: none !important;
 }
 
-/* Development */
+/* Development — outermost context panel only (from live DOM) */
 html.jd-hide-development .jd-section-development,
-html.jd-hide-development [data-testid="issue.views.issue-base.foundation.development.section"],
-html.jd-hide-development [data-testid="issue-view-foundation-development-section"],
-html.jd-hide-development #devstatus-container {
+html.jd-hide-development [data-vc="issue-view-development-context-panel"],
+html.jd-hide-development [data-testid="issue-view-layout-templates-views.ui.context.visible-hidden.ui.context-group.container.development-context-panel"] {
   display: none !important;
+}
+
+/* More fields — secondary-context-items from live DOM */
+html.jd-hide-morefields .jd-section-morefields,
+html.jd-hide-morefields [data-vc="issue-view-context-group-secondary-context-items"],
+html.jd-hide-morefields [data-testid="issue-view-layout-templates-views.ui.context.visible-hidden.ui.context-group.container.secondary-context-items"],
+html.jd-hide-morefields [data-testid*="container.secondary-context-items"] {
+  display: none !important;
+}
+
+/* Automation — outermost apps panel from live DOM */
+html.jd-hide-automation .jd-section-automation,
+html.jd-hide-automation [data-vc="issue-view-automation-apps-panel"],
+html.jd-hide-automation [data-testid="issue-view-layout-templates-views.ui.context.visible-hidden.ui.ecosystem-context-group.container.automation-issue-audit-log-panel"],
+html.jd-hide-automation [data-testid*="container.automation-issue-audit-log-panel"] {
+  display: none !important;
+}
+
+/* Hollow accordion shells left after hiding section content */
+.jd-empty-shell {
+  display: none !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  min-height: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
 }
 
 /* Time Tracking */
@@ -190,4 +217,68 @@ html.jd-hide-sprint .jd-section-sprint,
 html.jd-hide-sprint [data-testid="issue.views.issue-base.foundation.sprint.section"],
 html.jd-hide-sprint #sprint-val {
   display: none !important;
+}
+
+/* Created / Updated timestamps */
+html.jd-hide-timestamps .jd-section-timestamps {
+  display: none !important;
+}
+
+
+/* ── Size & Font (issue view) ──────────────────────── */
+
+html.jd-sizing {
+  --jd-main-scale: 1;
+  --jd-side-scale: 1;
+  --jd-space-scale: 1;
+  --jd-font-scale: 1;
+}
+
+/*
+ * Font scale: apply ONCE on the issue root via zoom.
+ * Do NOT set font-size on nested [data-testid*="issue.views"] nodes —
+ * that compounds (24px → ~39px at 105%).
+ */
+html.jd-font-scaled .jd-issue-root {
+  zoom: var(--jd-font-scale, 1);
+}
+
+/* Custom font family (inheritance; !important only on root + children once) */
+html.jd-custom-font .jd-issue-root,
+html.jd-custom-font .jd-issue-root * {
+  font-family: var(--jd-font-family) !important;
+}
+
+/* Main column width */
+html.jd-sizing [data-testid="issue.views.issue-details.issue-layout.container-left"],
+html.jd-sizing [data-testid*="issue-layout.container-left" i],
+html.jd-sizing .jd-issue-root [data-testid*="container-left" i] {
+  flex-grow: calc(1.6 * var(--jd-main-scale, 1)) !important;
+  flex-basis: calc(60% * var(--jd-main-scale, 1)) !important;
+  max-width: calc(100% * var(--jd-main-scale, 1)) !important;
+  min-width: 0 !important;
+}
+
+/* Side panel width */
+html.jd-sizing [data-testid="issue.views.issue-details.issue-layout.container-right"],
+html.jd-sizing [data-testid*="issue-layout.container-right" i],
+html.jd-sizing .jd-issue-root [data-testid*="container-right" i],
+html.jd-sizing aside:has([data-testid*="issue-view-foundation" i]),
+html.jd-sizing [data-testid*="issue.views.issue-base.context" i] {
+  flex: 0 0 calc(300px * var(--jd-side-scale, 1)) !important;
+  width: calc(300px * var(--jd-side-scale, 1)) !important;
+  max-width: calc(420px * var(--jd-side-scale, 1)) !important;
+  min-width: calc(200px * var(--jd-side-scale, 1)) !important;
+}
+
+/* Content spacing / density */
+html.jd-sizing [data-testid="issue.views.issue-details.issue-layout.issue-layout"],
+html.jd-sizing [data-testid*="issue-layout.issue-layout" i] {
+  gap: calc(16px * var(--jd-space-scale, 1)) !important;
+  column-gap: calc(24px * var(--jd-space-scale, 1)) !important;
+  padding: calc(12px * var(--jd-space-scale, 1)) calc(16px * var(--jd-space-scale, 1)) !important;
+}
+
+html.jd-sizing [data-testid*="issue.views.issue-base.foundation" i] {
+  padding-block: calc(6px * var(--jd-space-scale, 1)) !important;
 }
