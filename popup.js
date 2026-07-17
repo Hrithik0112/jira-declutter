@@ -42,8 +42,8 @@ function isJiraUrl(url) {
     const host = u.hostname.toLowerCase();
     return (
       host.endsWith('.atlassian.net') ||
-      host === 'login.jira.your-company.com' ||
-      host.endsWith('.jira.your-company.com')
+      host === 'login.jira.unifize.com' ||
+      host.endsWith('.jira.unifize.com')
     );
   } catch (_) {
     return false;
@@ -179,6 +179,14 @@ function applyControlsToUi(state) {
 
 function saveAndPush() {
   const state = collectState();
+
+  // Turning Linear off also clears Dark mode
+  if (!state.linearView) {
+    state.linearDark = false;
+    const darkCb = document.getElementById('linear-dark-toggle');
+    if (darkCb) darkCb.checked = false;
+  }
+
   updateSizingLabels(state);
   syncLinearDarkRow(state);
   chrome.storage.sync.set({ jiraDeclutter: state });

@@ -839,10 +839,17 @@
     }
     lastFingerprint = '';
     clearTimeout(bootTimer);
+    clearTimeout(refreshTimer);
     if (disablePref) {
       enabled = false;
+      darkMode = false;
+      applyThemeClass();
       chrome.storage.sync.get('jiraDeclutter', (result) => {
-        const state = { ...(result.jiraDeclutter || {}), linearView: false };
+        const state = {
+          ...(result.jiraDeclutter || {}),
+          linearView: false,
+          linearDark: false
+        };
         chrome.storage.sync.set({ jiraDeclutter: state });
       });
     }
@@ -855,7 +862,17 @@
   }
 
   function setDark(on, persist) {
-    darkMode = !!on;
+    const next = !!on;
+    if (darkMode === next) {
+      if (persist) {
+        chrome.storage.sync.get('jiraDeclutter', (result) => {
+          const state = { ...(result.jiraDeclutter || {}), linearDark: darkMode };
+          chrome.storage.sync.set({ jiraDeclutter: state });
+        });
+      }
+      return;
+    }
+    darkMode = next;
     applyThemeClass();
     if (enabled) {
       lastFingerprint = '';
@@ -870,32 +887,33 @@
   }
 
   function setEnabled(on) {
-    enabled = !!on;
+    const next = !!on;
+    if (enabled === next) return;
+
     clearTimeout(bootTimer);
-    if (!enabled) {
+    clearTimeout(refreshTimer);
+
+    if (!next) {
+      enabled = false;
       tearDown(false);
       return;
     }
 
-    // Briefly keep overlay off so comment bodies can lazy-load, then mount
+    enabled = true;
+
+    // Wake lazy comment bodies, then mount once
     document.documentElement.classList.remove(HOST_CLASS);
-    const issueRoot = findIssueRoot();
-    wakeComments(issueRoot);
+    wakeComments(findIssueRoot());
     bootTimer = setTimeout(() => {
       if (!enabled) return;
       mount();
-      // Second pass after lazy bodies settle
-      setTimeout(() => {
-        if (enabled) {
-          lastFingerprint = '';
-          mount();
-        }
-      }, 700);
-    }, 450);
+    }, 400);
   }
 
   const observer = new MutationObserver(() => {
     if (!enabled) return;
+    // Ignore our own overlay subtree (appended on <html>, not body) —
+    // body mutations from Jira SPA still refresh content once, debounced.
     scheduleRefresh();
   });
 
@@ -919,10 +937,12 @@
     isDark: () => darkMode
   };
 
+  // Apply saved prefs once scripts are ready (content.js may have run earlier)
   try {
     chrome.storage.sync.get('jiraDeclutter', (result) => {
       const prefs = result?.jiraDeclutter || {};
       darkMode = prefs.linearDark === true;
+      applyThemeClass();
       if (prefs.linearView === true) setEnabled(true);
     });
   } catch (_) {
