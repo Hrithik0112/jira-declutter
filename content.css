@@ -1,0 +1,143 @@
+/*
+ * Jira Declutter — Content Styles
+ *
+ * Strategy: add a class like `jd-hide-{section}` to <html>.
+ * Content script also tags matching nodes with `jd-section-*`.
+ * Using !important because Jira inlines a lot of styles.
+ *
+ * Covers classic Jira Cloud selectors + 2025 "new navigation".
+ */
+
+/* ── Layout ─────────────────────────────────────────── */
+
+/* Left sidebar / contextual navigation */
+html.jd-hide-sidebar .jd-section-sidebar,
+html.jd-hide-sidebar [data-testid="ContextualNavigation"],
+html.jd-hide-sidebar [data-testid="Content"] > div:first-child > nav,
+html.jd-hide-sidebar nav[aria-label="Space navigation"],
+html.jd-hide-sidebar nav[aria-label="Sidebar"],
+html.jd-hide-sidebar nav[aria-label="Side navigation"],
+html.jd-hide-sidebar nav[aria-label*="sidebar" i],
+html.jd-hide-sidebar [data-testid="ak-side-navigation"],
+html.jd-hide-sidebar [data-testid="project-level-sidebar"],
+html.jd-hide-sidebar [data-testid="side-navigation"],
+html.jd-hide-sidebar [data-testid="nav-menu"],
+html.jd-hide-sidebar [data-testid="page-layout.slot.left-sidebar"],
+html.jd-hide-sidebar [data-testid="page-layout.slot.navigation"],
+html.jd-hide-sidebar [data-testid*="side-navigation" i],
+html.jd-hide-sidebar [role="complementary"][class*="sidebar"],
+html.jd-hide-sidebar aside[aria-label*="navigation" i],
+html.jd-hide-sidebar aside[aria-label*="sidebar" i],
+html.jd-hide-sidebar .css-glywti {
+  display: none !important;
+}
+
+/* Top navigation bar */
+html.jd-hide-topnav .jd-section-topnav,
+html.jd-hide-topnav [data-testid="atlassian-navigation"],
+html.jd-hide-topnav [data-testid="navigation-header"],
+html.jd-hide-topnav [data-testid="top-navigation"],
+html.jd-hide-topnav [data-testid="page-layout.slot.top-navigation"],
+html.jd-hide-topnav [data-testid="page-layout.slot.banner"],
+html.jd-hide-topnav [data-testid*="top-navigation" i],
+html.jd-hide-topnav nav[aria-label="Primary"],
+html.jd-hide-topnav nav[aria-label*="top" i],
+html.jd-hide-topnav header[role="banner"],
+html.jd-hide-topnav [role="banner"] {
+  display: none !important;
+}
+
+
+/* ── Issue Detail — Main Content ───────────────────── */
+
+/* Description */
+html.jd-hide-description .jd-section-description,
+html.jd-hide-description [data-testid="issue.views.field.rich-text.description"],
+html.jd-hide-description [data-testid="issue-field-description"],
+html.jd-hide-description #description-val {
+  display: none !important;
+}
+
+/* Attachments */
+html.jd-hide-attachments .jd-section-attachments,
+html.jd-hide-attachments [data-testid="issue.views.issue-base.foundation.attachment-panel"],
+html.jd-hide-attachments [data-testid="issue.views.issue-base.content.attachment.container"],
+html.jd-hide-attachments #attachment_thumbnails,
+html.jd-hide-attachments #attachmentmodule {
+  display: none !important;
+}
+
+/* Child Issues / Subtasks */
+html.jd-hide-childissues .jd-section-childissues,
+html.jd-hide-childissues [data-testid="issue.views.issue-base.foundation.child-issues-panel"],
+html.jd-hide-childissues [data-testid="issue.views.common.child-issues-panel.issues-container"],
+html.jd-hide-childissues #view-subtasks {
+  display: none !important;
+}
+
+/* Linked Issues */
+html.jd-hide-linkedissues .jd-section-linkedissues,
+html.jd-hide-linkedissues [data-testid="issue.views.issue-base.foundation.link-panel"],
+html.jd-hide-linkedissues [data-testid="issue.views.issue-base.content.issue-links.group-container"],
+html.jd-hide-linkedissues #linkingmodule {
+  display: none !important;
+}
+
+/* Activity / Comments */
+html.jd-hide-activity .jd-section-activity,
+html.jd-hide-activity [data-testid="issue.views.issue-base.foundation.activity-panel"],
+html.jd-hide-activity [data-testid="issue-activity-feed"],
+html.jd-hide-activity [data-testid="issue.activity"],
+html.jd-hide-activity #activity-panel,
+html.jd-hide-activity #activitymodule {
+  display: none !important;
+}
+
+
+/* ── Issue Detail — Side Panel ─────────────────────── */
+
+/* Details (priority, labels, components, fix versions…) */
+html.jd-hide-details .jd-section-details,
+html.jd-hide-details [data-testid="issue.views.issue-base.foundation.details.section"],
+html.jd-hide-details [data-testid="issue-view-foundation-details-section"],
+html.jd-hide-details #details-module {
+  display: none !important;
+}
+
+/* People (assignee, reporter) */
+html.jd-hide-people .jd-section-people,
+html.jd-hide-people [data-testid="issue.views.issue-base.foundation.people.section"],
+html.jd-hide-people [data-testid="issue-view-foundation-people-section"],
+html.jd-hide-people #peoplemodule {
+  display: none !important;
+}
+
+/* Dates */
+html.jd-hide-dates .jd-section-dates,
+html.jd-hide-dates [data-testid="issue.views.issue-base.foundation.dates.section"],
+html.jd-hide-dates [data-testid="issue-view-foundation-dates-section"],
+html.jd-hide-dates #datesmodule {
+  display: none !important;
+}
+
+/* Development */
+html.jd-hide-development .jd-section-development,
+html.jd-hide-development [data-testid="issue.views.issue-base.foundation.development.section"],
+html.jd-hide-development [data-testid="issue-view-foundation-development-section"],
+html.jd-hide-development #devstatus-container {
+  display: none !important;
+}
+
+/* Time Tracking */
+html.jd-hide-timetracking .jd-section-timetracking,
+html.jd-hide-timetracking [data-testid="issue.views.issue-base.foundation.time-tracking.section"],
+html.jd-hide-timetracking #timetrackingmodule {
+  display: none !important;
+}
+
+/* Sprint */
+html.jd-hide-sprint .jd-section-sprint,
+html.jd-hide-sprint [data-testid="issue.views.issue-base.foundation.sprint.section"],
+html.jd-hide-sprint #sprint-val {
+  display: none !important;
+}
