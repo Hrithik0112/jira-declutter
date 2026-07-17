@@ -6,15 +6,15 @@
   "permissions": ["storage", "activeTab", "scripting"],
   "host_permissions": [
     "https://*.atlassian.net/*",
-    "https://login.jira.your-company.com/*",
-    "https://*.jira.your-company.com/*"
+    "https://login.jira.unifize.com/*",
+    "https://*.jira.unifize.com/*"
   ],
   "content_scripts": [
     {
       "matches": [
         "https://*.atlassian.net/*",
-        "https://login.jira.your-company.com/*",
-        "https://*.jira.your-company.com/*"
+        "https://login.jira.unifize.com/*",
+        "https://*.jira.unifize.com/*"
       ],
       "css": ["content.css", "linear-view.css"],
       "js": ["content.js", "linear-view.js"],

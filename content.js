@@ -46,8 +46,13 @@ function applyState(state) {
 
   // Linear-style issue overlay (scrapes DOM → cleaner UI)
   if (window.JDLinearView) {
-    window.JDLinearView.setDark(state.linearDark === true);
-    window.JDLinearView.setEnabled(state.linearView === true);
+    if (state.linearView !== true) {
+      window.JDLinearView.setEnabled(false);
+      window.JDLinearView.setDark(false);
+    } else {
+      window.JDLinearView.setDark(state.linearDark === true);
+      window.JDLinearView.setEnabled(true);
+    }
   }
 
   // Hide bordered shells left behind after section content is toggled off
